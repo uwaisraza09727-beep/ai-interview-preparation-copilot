@@ -9,7 +9,7 @@ from app.core.config.settings import settings
 
 engine = create_async_engine(
     settings.database_url,
-    echo=True
+    echo=settings.environment == "development",
 )
 
 AsyncSessionLocal = async_sessionmaker(
