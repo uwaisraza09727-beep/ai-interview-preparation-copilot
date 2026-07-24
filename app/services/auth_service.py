@@ -1,3 +1,8 @@
+from app.core.security.password import verify_password
+from app.core.security.jwt import create_access_token
+from app.schemas.token import Token
+from app.schemas.user import UserLogin
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security.password import hash_password
@@ -34,4 +39,32 @@ class AuthService:
         return await self.user_repository.create(
             db,
             user,
+        )
+    
+    async def login(
+        self,
+        db: AsyncSession,
+        user_data: UserLogin,
+    ) -> Token:
+
+        user = await self.user_repository.get_by_email(
+            db,
+            user_data.email,
+        )
+
+        if not user:
+            raise ValueError("Invalid email or password")
+
+        if not verify_password(
+            user_data.password,
+            user.password_hash,
+        ):
+            raise ValueError("Invalid email or password")
+
+        access_token = create_access_token(
+            str(user.id)
+        )
+
+        return Token(
+            access_token=access_token,
         )

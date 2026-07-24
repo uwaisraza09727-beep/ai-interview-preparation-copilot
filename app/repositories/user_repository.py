@@ -31,3 +31,15 @@ class UserRepository:
         await db.refresh(user)
 
         return user
+    
+    async def get_by_id(
+        self,
+        db: AsyncSession,
+        user_id: str,
+    ) -> User | None:
+
+        result = await db.execute(
+            select(User).where(User.id == user_id)
+        )
+
+        return result.scalar_one_or_none()
