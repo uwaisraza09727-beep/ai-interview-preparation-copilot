@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int
 
     environment: str
+    upload_dir: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
