@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from app.schemas.education import Education
 
 
 class ParsedResume(BaseModel):
@@ -8,8 +9,8 @@ class ParsedResume(BaseModel):
 
     skills: list[str] = []
 
-    education: list[str] = []
-
+    education: list[Education] = []
+    
     experience: list[str] = []
 
     projects: list[str] = []

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database.base_model import BaseModel
 from app.enums.user_role import UserRole
 from sqlalchemy.orm import relationship
+from app.models.job_description import JobDescription
 
 class User(BaseModel):
     __tablename__ = "users"
@@ -36,6 +37,12 @@ class User(BaseModel):
     
     resumes = relationship(
         "Resume",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    
+    job_descriptions = relationship(
+        "JobDescription",
         back_populates="user",
         cascade="all, delete-orphan",
     )

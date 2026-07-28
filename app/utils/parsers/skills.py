@@ -1,3 +1,5 @@
+import re
+
 SKILLS = [
     "python",
     "fastapi",
@@ -39,7 +41,10 @@ def extract_skills(
 
     for skill in SKILLS:
 
-        if skill in text:
+        if re.search(
+            rf"\b{re.escape(skill)}\b",
+            text,
+        ):
             found.append(skill)
 
     return sorted(set(found))

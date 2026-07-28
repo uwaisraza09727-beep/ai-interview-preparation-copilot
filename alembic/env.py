@@ -15,7 +15,7 @@ if str(BASE_DIR) not in sys.path:
 
 from app.core.config.settings import settings
 from app.core.database.base import Base
-from app.models.user import User
+from app.models import *
 
 config = context.config
 

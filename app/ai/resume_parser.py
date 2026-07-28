@@ -3,6 +3,7 @@ import re
 from app.schemas.parsed_resume import ParsedResume
 from app.utils.parsers.parser import extract_name
 from app.utils.parsers.skills import extract_skills
+from app.utils.parsers.certifations import extract_certifications
 from app.utils.parsers.education import (
     extract_education,
 )
@@ -52,4 +53,5 @@ class ResumeParser:
             education=extract_education(text),
             experience=extract_experience(text),
             projects=extract_projects(text),
+            certifications=extract_certifications(text),
         )

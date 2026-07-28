@@ -16,8 +16,8 @@ from app.core.database.base_model import BaseModel
 from sqlalchemy import Text
 
 
-class Resume(BaseModel):
-    __tablename__ = "resumes"
+class JobDescription(BaseModel):
+    __tablename__ = "job_descriptions"
 
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id"),
@@ -55,12 +55,13 @@ class Resume(BaseModel):
         default="uploaded",
         nullable=False,
     )
-    
-    resume_text: Mapped[str | None] = mapped_column(
+
+    jd_text: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )
+
     user = relationship(
         "User",
-        back_populates="resumes",
+        back_populates="job_descriptions",
     )
