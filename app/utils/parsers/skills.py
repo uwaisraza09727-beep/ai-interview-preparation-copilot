@@ -1,5 +1,6 @@
 import re
 
+
 SKILLS = [
     "python",
     "fastapi",
@@ -31,6 +32,7 @@ SKILLS = [
     "llm",
 ]
 
+
 def extract_skills(
     text: str,
 ) -> list[str]:
@@ -41,10 +43,14 @@ def extract_skills(
 
     for skill in SKILLS:
 
+        pattern = rf"\b{re.escape(skill)}\b"
+
         if re.search(
-            rf"\b{re.escape(skill)}\b",
+            pattern,
             text,
         ):
             found.append(skill)
 
-    return sorted(set(found))
+    return sorted(
+        set(found)
+    )

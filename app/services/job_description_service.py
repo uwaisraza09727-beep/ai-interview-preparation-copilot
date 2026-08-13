@@ -142,3 +142,34 @@ class JobDescriptionService:
             db,
             job_description,
         )
+        
+    async def create_from_text(
+        self,
+        db: AsyncSession,
+        user_id: str,
+        title: str,
+        jd_text: str,
+    ) -> JobDescription:
+
+        if not jd_text.strip():
+            raise ValueError(
+                "Job description text cannot be empty."
+            )
+
+        job_description = JobDescription(
+            user_id=user_id,
+            original_filename=title,
+            stored_filename=f"text-{uuid4()}.txt",
+            file_path="",
+            file_size=len(
+                jd_text.encode("utf-8")
+            ),
+            file_type="text",
+            upload_status="uploaded",
+            jd_text=jd_text.strip(),
+        )
+
+        return await self.job_description_repository.create(
+            db,
+            job_description,
+        )    

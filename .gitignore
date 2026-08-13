@@ -20,3 +20,6 @@ Thumbs.db
 
 # Alembic Cache
 *.log
+
+# User uploaded files
+uploads/

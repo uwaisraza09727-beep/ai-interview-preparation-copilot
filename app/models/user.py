@@ -46,3 +46,8 @@ class User(BaseModel):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    
+    match_results = relationship(
+        "MatchResult",
+        back_populates="user",
+    )

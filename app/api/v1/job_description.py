@@ -21,6 +21,9 @@ from app.schemas.job_description import (
 from app.services.job_description_service import (
     JobDescriptionService,
 )
+from app.schemas.job_description_text import (
+    JobDescriptionTextCreate,
+)
 
 
 router = APIRouter(
@@ -116,3 +119,29 @@ async def delete_job_description(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e),
         )
+        
+@router.post(
+    "/text",
+    response_model=JobDescriptionResponse,
+)
+async def create_job_description_from_text(
+    data: JobDescriptionTextCreate,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+
+    try:
+
+        return await job_description_service.create_from_text(
+            db=db,
+            user_id=str(current_user.id),
+            title=data.title,
+            jd_text=data.jd_text,
+        )
+
+    except ValueError as e:
+
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )        
