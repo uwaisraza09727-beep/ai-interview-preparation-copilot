@@ -15,6 +15,7 @@ from app.repositories.interview_answer_repository import (
 from app.repositories.interview_question_repository import (
     InterviewQuestionRepository,
 )
+
 from app.repositories.interview_session_repository import (
     InterviewSessionRepository,
 )
@@ -35,7 +36,7 @@ class InterviewAnswerService:
         self.question_repository = (
             InterviewQuestionRepository()
         )
-        
+
         self.session_repository = (
             InterviewSessionRepository()
         )
@@ -62,7 +63,7 @@ class InterviewAnswerService:
             )
 
         if str(question.user_id) != user_id:
-            
+
             raise ValueError(
                 "Access Denied"
             )
@@ -79,19 +80,22 @@ class InterviewAnswerService:
             raise ValueError(
                 "Answer already submitted for this question"
             )
-            
-        await db.rollback()    
-            
+
+        question_id = question.id
+        question_text = question.question
+
+        await db.rollback()
+
         result = (
             await self.answer_evaluator.evaluate_answer(
-                question.question,
+                question_text,
                 answer,
             )
         )
 
         interview_answer = InterviewAnswer(
             user_id=user_id,
-            interview_question_id=question.id,
+            interview_question_id=question_id,
             answer=answer,
             score=result.score,
             feedback=result.feedback,
@@ -106,6 +110,7 @@ class InterviewAnswerService:
                 interview_answer,
             )
         )
+
         session = (
             await self.session_repository
             .get_active_session(
@@ -192,7 +197,7 @@ class InterviewAnswerService:
             db,
             answer,
         )
-        
+
     async def get_performance(
         self,
         db: AsyncSession,
@@ -208,6 +213,7 @@ class InterviewAnswerService:
         )
 
         if not answers:
+
             return {
                 "total_answers": 0,
                 "average_score": 0,
