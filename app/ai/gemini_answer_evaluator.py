@@ -1,5 +1,7 @@
 from google import genai
 
+from app.ai.base import AnswerEvaluator
+
 from app.core.config.settings import settings
 
 from app.schemas.answer_feedback import (
@@ -7,7 +9,8 @@ from app.schemas.answer_feedback import (
 )
 
 
-class GeminiAnswerEvaluator:
+
+class GeminiAnswerEvaluator(AnswerEvaluator):
 
     def __init__(self):
 

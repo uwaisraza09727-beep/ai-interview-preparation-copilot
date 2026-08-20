@@ -1,5 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.ai.base import AnswerEvaluator
+
 from app.ai.gemini_answer_evaluator import (
     GeminiAnswerEvaluator,
 )
@@ -25,7 +27,7 @@ class InterviewAnswerService:
 
     def __init__(self):
 
-        self.answer_evaluator = (
+        self.answer_evaluator: AnswerEvaluator = (
             GeminiAnswerEvaluator()
         )
 
