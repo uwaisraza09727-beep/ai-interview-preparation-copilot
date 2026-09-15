@@ -4,6 +4,18 @@ from app.ai.gemini_question_generator import (
     GeminiQuestionGenerator,
 )
 
+from app.ai.rag.embeddings import (
+    GeminiEmbeddingProvider,
+)
+
+from app.ai.rag.retriever import (
+    SimpleRetriever,
+)
+
+from app.ai.rag.service import (
+    RAGService,
+)
+
 from app.models.interview_question import (
     InterviewQuestion,
 )
@@ -39,6 +51,11 @@ class InterviewQuestionService:
 
         self.job_description_repository = (
             JobDescriptionRepository()
+        )
+
+        self.rag_service = RAGService(
+            GeminiEmbeddingProvider(),
+            SimpleRetriever(),
         )
 
     async def generate_questions(
@@ -91,14 +108,69 @@ class InterviewQuestionService:
             )
         )
 
+        documents = [
+            {
+                "text": resume.resume_text,
+            },
+            {
+                "text": job_description.jd_text,
+            },
+        ]
+
+        document_texts = [
+            document["text"]
+            for document in documents
+            if document["text"]
+        ]
+
+        embeddings = (
+            await self.rag_service.embed_documents(
+                document_texts
+            )
+        )
+
+        rag_documents = [
+            {
+                "text": text,
+                "embedding": embedding,
+            }
+            for text, embedding in zip(
+                document_texts,
+                embeddings,
+            )
+        ]
+
+        query = (
+            f"{category} {difficulty} "
+            "interview questions"
+        )
+
+        relevant_documents = (
+            await self.rag_service.retrieve_relevant_documents(
+                query=query,
+                documents=rag_documents,
+                top_k=2,
+            )
+        )
+
+        context_parts = [
+            item["document"]["text"]
+            for item in relevant_documents
+        ]
+
+        rag_context = "\n\n".join(
+            context_parts
+        )
+
         questions = (
             await self.question_generator.generate_questions(
-                resume.resume_text,
-                job_description.jd_text,
-                category,
-                difficulty,
-                question_count,
-                existing_questions,
+                resume_text=rag_context,
+                jd_text=job_description.jd_text,
+                category=category,
+                difficulty=difficulty,
+                question_count=question_count,
+                existing_questions=existing_questions,
+                rag_context=rag_context,
             )
         )
 
@@ -126,7 +198,7 @@ class InterviewQuestionService:
             db,
             question_models,
         )
-        
+
     async def regenerate_questions(
         self,
         db: AsyncSession,
@@ -147,8 +219,7 @@ class InterviewQuestionService:
             difficulty=difficulty,
             question_count=question_count,
         )
-    
-    
+
     async def get_my_questions(
         self,
         db: AsyncSession,

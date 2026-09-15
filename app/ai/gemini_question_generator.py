@@ -1,6 +1,7 @@
 from google import genai
 
 from app.core.config.settings import settings
+
 from app.schemas.generated_question import (
     GeneratedQuestions,
 )
@@ -22,6 +23,7 @@ class GeminiQuestionGenerator:
         difficulty: str,
         question_count: int,
         existing_questions: list[str],
+        rag_context: str,
     ) -> GeneratedQuestions:
 
         prompt = f"""
@@ -43,6 +45,9 @@ Candidate Resume:
 Job Description:
 {jd_text}
 
+Relevant RAG Context:
+{rag_context}
+
 Existing Questions:
 {chr(10).join(existing_questions)}
 
@@ -50,6 +55,10 @@ Requirements:
 
 - Questions must be directly relevant to the resume.
 - Questions must be relevant to the job description.
+- Use the Relevant RAG Context to make questions
+  specific to the candidate's resume and job description.
+- Prefer information supported by the retrieved context.
+- Do not invent candidate experience.
 - Avoid duplicate questions.
 - Focus on practical interview questions.
 - Questions should test the candidate's actual skills
@@ -71,15 +80,17 @@ situational
 conceptual
 """
 
-        response = await self.client.aio.models.generate_content(
-            model=settings.gemini_model,
-            contents=prompt,
-            config={
-                "response_mime_type": "application/json",
-                "response_json_schema": (
-                    GeneratedQuestions.model_json_schema()
-                ),
-            },
+        response = (
+            await self.client.aio.models.generate_content(
+                model=settings.gemini_model,
+                contents=prompt,
+                config={
+                    "response_mime_type": "application/json",
+                    "response_json_schema": (
+                        GeneratedQuestions.model_json_schema()
+                    ),
+                },
+            )
         )
 
         return GeneratedQuestions.model_validate_json(

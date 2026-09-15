@@ -27,6 +27,12 @@ class RAGService:
         top_k: int = 3,
     ) -> list[dict[str, Any]]:
 
+        if not query.strip():
+            return []
+
+        if not documents:
+            return []
+
         query_embedding = (
             await self.embedding_provider.embed(
                 query
@@ -38,7 +44,7 @@ class RAGService:
             documents,
             top_k,
         )
-        
+
     async def embed_documents(
         self,
         documents: list[str],
@@ -47,6 +53,9 @@ class RAGService:
         embeddings = []
 
         for document in documents:
+
+            if not document.strip():
+                continue
 
             embedding = (
                 await self.embedding_provider.embed(
@@ -58,4 +67,4 @@ class RAGService:
                 embedding
             )
 
-        return embeddings    
+        return embeddings

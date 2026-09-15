@@ -4,6 +4,10 @@ from app.ai.base import AnswerEvaluator
 
 from app.core.config.settings import settings
 
+from app.core.exceptions import (
+    AIServiceError,
+)
+
 from app.schemas.answer_feedback import (
     AnswerFeedback,
 )
@@ -63,17 +67,25 @@ strengths should mention the strongest point.
 improvements should mention how to improve.
 """
 
-        response = await self.client.aio.models.generate_content(
-            model=settings.gemini_model,
-            contents=prompt,
-            config={
-                "response_mime_type": "application/json",
-                "response_json_schema": (
-                    AnswerFeedback.model_json_schema()
-                ),
-            },
-        )
+        try:
 
-        return AnswerFeedback.model_validate_json(
-            response.text
-        )
+            response = await self.client.aio.models.generate_content(
+                model=settings.gemini_model,
+                contents=prompt,
+                config={
+                    "response_mime_type": "application/json",
+                    "response_json_schema": (
+                        AnswerFeedback.model_json_schema()
+                    ),
+                },
+            )
+
+            return AnswerFeedback.model_validate_json(
+                response.text
+            )
+
+        except Exception as exc:
+
+            raise AIServiceError(
+                "AI answer evaluation failed"
+            ) from exc

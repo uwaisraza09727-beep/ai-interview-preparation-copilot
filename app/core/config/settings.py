@@ -4,6 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str
     database_url: str
+    redis_url: str
+
 
     jwt_secret_key: str
 

@@ -182,9 +182,7 @@ async def regenerate_questions(
         db=db,
         user_id=str(current_user.id),
         resume_id=request.resume_id,
-        job_description_id=(
-            request.job_description_id
-        ),
+        job_description_id=request.job_description_id,
         category=request.category,
         difficulty=request.difficulty,
         question_count=request.question_count,
