@@ -3,6 +3,8 @@
 
 # Environment Variables
 .env
+.env.*
+!.env.example
 
 # Python Cache
 __pycache__/
@@ -23,3 +25,9 @@ Thumbs.db
 
 # User uploaded files
 uploads/
+
+# Local frontend backups / code exports
+frontend - backup/
+frontend-all-code.txt
+frontend-complete-code.txt
+frontend-current-code.txt

@@ -53,39 +53,58 @@ export default function Resume() {
   };
 
   return (
-    <div>
-      <h1>Resume</h1>
+    <main className="page-container">
+      <div className="page-heading">
+        <h1>Resume</h1>
+        <p>Upload and manage your resumes for interview preparation.</p>
+      </div>
 
-      <h2>Upload Resume</h2>
+      <section className="card upload-card">
+        <h2>Upload Resume</h2>
+        <p className="section-description">
+          Supported formats: PDF, DOC, DOCX
+        </p>
 
-      <form onSubmit={handleUpload}>
-        <input
-          type="file"
-          accept=".pdf,.doc,.docx"
-          onChange={(e) => setFile(e.target.files[0])}
-        />
+        <form onSubmit={handleUpload} className="upload-form">
+          <input
+            className="input"
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
 
-        <br />
-        <br />
+          <button className="btn btn-primary" type="submit">
+            Upload Resume
+          </button>
+        </form>
 
-        <button type="submit">Upload Resume</button>
-      </form>
+        {message && <p className="form-message">{message}</p>}
+      </section>
 
-      <p>{message}</p>
+      <section className="content-section">
+        <div className="section-heading">
+          <h2>My Resumes</h2>
+          <span className="count-badge">{resumes.length}</span>
+        </div>
 
-      <h2>My Resumes</h2>
-
-      {resumes.length === 0 ? (
-        <p>No resumes uploaded yet.</p>
-      ) : (
-        <ul>
-          {resumes.map((resume) => (
-            <li key={resume.id}>
-              {resume.original_filename} — {resume.file_size} bytes
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+        {resumes.length === 0 ? (
+          <div className="card empty-state">
+            <h3>No resumes uploaded yet</h3>
+            <p>Upload your resume to start preparing for interviews.</p>
+          </div>
+        ) : (
+          <div className="resume-list">
+            {resumes.map((resume) => (
+              <div className="card resume-item" key={resume.id}>
+                <div>
+                  <h3>{resume.original_filename}</h3>
+                  <p>{resume.file_size} bytes</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
   );
 }

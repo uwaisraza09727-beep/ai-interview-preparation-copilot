@@ -15,7 +15,6 @@ export default function Interview() {
   const [questions, setQuestions] = useState([]);
   const [message, setMessage] = useState("");
 
-  // Answer evaluation state
   const [answers, setAnswers] = useState({});
   const [evaluations, setEvaluations] = useState({});
   const [evaluationErrors, setEvaluationErrors] = useState({});
@@ -50,8 +49,6 @@ export default function Interview() {
 
     setMessage("Generating questions...");
     setQuestions([]);
-
-    // Clear old answer and evaluation data
     setAnswers({});
     setEvaluations({});
     setEvaluationErrors({});
@@ -92,7 +89,6 @@ export default function Interview() {
       [questionId]: value,
     }));
 
-    // Clear previous error when user edits the answer
     setEvaluationErrors((previousErrors) => ({
       ...previousErrors,
       [questionId]: "",
@@ -105,8 +101,7 @@ export default function Interview() {
     if (answer.length < 10) {
       setEvaluationErrors((previousErrors) => ({
         ...previousErrors,
-        [questionId]:
-          "Answer must be at least 10 characters long.",
+        [questionId]: "Answer must be at least 10 characters long.",
       }));
 
       return;
@@ -165,218 +160,419 @@ export default function Interview() {
   };
 
   return (
-    <div>
-      <h1>Interview Preparation</h1>
+    <main className="page-container">
+      <div className="interview-page">
 
-      <h2>Generate Interview Questions</h2>
+        <section className="interview-hero">
+          <div>
+            <span className="interview-eyebrow">
+              AI INTERVIEW COPILOT
+            </span>
 
-      <form onSubmit={handleGenerate}>
-        <div>
-          <label>Resume</label>
-          <br />
+            <h1>
+              Practice smarter.
+              <br />
+              <span>Interview with confidence.</span>
+            </h1>
 
-          <select
-            value={resumeId}
-            onChange={(e) => setResumeId(e.target.value)}
-            required
-          >
-            <option value="">Select Resume</option>
+            <p>
+              Generate personalized interview questions from your resume
+              and target job description, then get AI-powered feedback
+              on your answers.
+            </p>
+          </div>
 
-            {resumes.map((resume) => (
-              <option key={resume.id} value={resume.id}>
-                {resume.original_filename}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="interview-hero-icon">
+            <div className="ai-circle">
+              AI
+            </div>
 
-        <br />
+            <span>Smart Practice</span>
+          </div>
+        </section>
 
-        <div>
-          <label>Job Description</label>
-          <br />
+        <section className="interview-workspace card">
 
-          <select
-            value={jobDescriptionId}
-            onChange={(e) =>
-              setJobDescriptionId(e.target.value)
-            }
-            required
-          >
-            <option value="">Select Job Description</option>
+          <div className="workspace-header">
+            <div className="workspace-title">
+              <div className="workspace-icon">
+                ✦
+              </div>
 
-            {jobDescriptions.map((jd) => (
-              <option key={jd.id} value={jd.id}>
-                {jd.original_filename}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <br />
-
-        <div>
-          <label>Category</label>
-          <br />
-
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="technical">Technical</option>
-            <option value="project">Project</option>
-            <option value="behavioral">Behavioral</option>
-            <option value="situational">Situational</option>
-            <option value="conceptual">Conceptual</option>
-          </select>
-        </div>
-
-        <br />
-
-        <div>
-          <label>Difficulty</label>
-          <br />
-
-          <select
-            value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value)}
-          >
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-        </div>
-
-        <br />
-
-        <div>
-          <label>Question Count</label>
-          <br />
-
-          <input
-            type="number"
-            min="1"
-            max="20"
-            value={questionCount}
-            onChange={(e) =>
-              setQuestionCount(e.target.value)
-            }
-          />
-        </div>
-
-        <br />
-
-        <button type="submit">
-          Generate Questions
-        </button>
-      </form>
-
-      <p>{message}</p>
-
-      <hr />
-
-      <h2>Generated Questions</h2>
-
-      {questions.length === 0 ? (
-        <p>No questions generated yet.</p>
-      ) : (
-        <ol>
-          {questions.map((item) => {
-            const evaluation = evaluations[item.id];
-            const isEvaluating = evaluating[item.id];
-            const evaluationError =
-              evaluationErrors[item.id];
-
-            return (
-              <li key={item.id}>
+              <div>
+                <h2>Interview Preparation</h2>
                 <p>
-                  <strong>{item.question}</strong>
+                  Configure your practice session and generate
+                  personalized questions.
                 </p>
+              </div>
+            </div>
 
-                <p>
-                  Category: {item.category} | Difficulty:{" "}
-                  {item.difficulty} | Type:{" "}
-                  {item.question_type}
-                </p>
+            <div className="workspace-status">
+              AI Powered
+            </div>
+          </div>
 
-                <div>
-                  <label>
-                    <strong>Your Answer</strong>
-                  </label>
+          <div className="generator-content">
 
-                  <br />
+            <div className="generator-title">
+              <h3>Generate Interview Questions</h3>
 
-                  <textarea
-                    rows="6"
-                    value={answers[item.id] || ""}
+              <p>
+                Choose your resume, job description, category,
+                difficulty and number of questions.
+              </p>
+            </div>
+
+            <form
+              onSubmit={handleGenerate}
+              className="interview-form"
+            >
+
+              <div className="interview-form-row">
+
+                <div className="form-group">
+                  <label>Resume</label>
+
+                  <select
+                    className="select"
+                    value={resumeId}
                     onChange={(e) =>
-                      handleAnswerChange(
-                        item.id,
-                        e.target.value
-                      )
+                      setResumeId(e.target.value)
                     }
-                    placeholder="Write your answer here..."
+                    required
+                  >
+                    <option value="">
+                      Select Resume
+                    </option>
+
+                    {resumes.map((resume) => (
+                      <option
+                        key={resume.id}
+                        value={resume.id}
+                      >
+                        {resume.original_filename}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Job Description</label>
+
+                  <select
+                    className="select"
+                    value={jobDescriptionId}
+                    onChange={(e) =>
+                      setJobDescriptionId(e.target.value)
+                    }
+                    required
+                  >
+                    <option value="">
+                      Select Job Description
+                    </option>
+
+                    {jobDescriptions.map((jd) => (
+                      <option
+                        key={jd.id}
+                        value={jd.id}
+                      >
+                        {jd.original_filename}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+              </div>
+
+              <div className="interview-form-row options-row">
+
+                <div className="form-group">
+                  <label>Category</label>
+
+                  <select
+                    className="select"
+                    value={category}
+                    onChange={(e) =>
+                      setCategory(e.target.value)
+                    }
+                  >
+                    <option value="technical">
+                      Technical
+                    </option>
+
+                    <option value="project">
+                      Project
+                    </option>
+
+                    <option value="behavioral">
+                      Behavioral
+                    </option>
+
+                    <option value="situational">
+                      Situational
+                    </option>
+
+                    <option value="conceptual">
+                      Conceptual
+                    </option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Difficulty</label>
+
+                  <select
+                    className="select"
+                    value={difficulty}
+                    onChange={(e) =>
+                      setDifficulty(e.target.value)
+                    }
+                  >
+                    <option value="easy">
+                      Easy
+                    </option>
+
+                    <option value="medium">
+                      Medium
+                    </option>
+
+                    <option value="hard">
+                      Hard
+                    </option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Question Count</label>
+
+                  <input
+                    className="input"
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={questionCount}
+                    onChange={(e) =>
+                      setQuestionCount(e.target.value)
+                    }
                   />
                 </div>
 
-                <br />
+              </div>
 
-                <button
-                  type="button"
-                  onClick={() => handleEvaluate(item.id)}
-                  disabled={isEvaluating}
-                >
-                  {isEvaluating
-                    ? "Evaluating..."
-                    : "Evaluate Answer"}
-                </button>
+              <button
+                className="btn btn-primary generate-btn"
+                type="submit"
+              >
+                ✦ Generate Questions
+              </button>
 
-                {evaluationError && (
-                  <p>
-                    <strong>Error:</strong>{" "}
-                    {evaluationError}
-                  </p>
-                )}
+            </form>
 
-                {evaluation && (
-                  <div>
-                    <hr />
+            {message && (
+              <div className="interview-message">
+                <span>✓</span>
+                {message}
+              </div>
+            )}
 
-                    <h3>Evaluation</h3>
+          </div>
+        </section>
 
-                    <p>
-                      <strong>Score:</strong>{" "}
-                      {evaluation.score}/10
-                    </p>
+        <section className="generated-section">
 
-                    <p>
-                      <strong>Feedback:</strong>{" "}
-                      {evaluation.feedback}
-                    </p>
+          <div className="generated-heading">
 
-                    <p>
-                      <strong>Strengths:</strong>{" "}
-                      {evaluation.strengths}
-                    </p>
+            <div>
+              <h2>Generated Questions</h2>
 
-                    <p>
-                      <strong>Improvements:</strong>{" "}
-                      {evaluation.improvements}
-                    </p>
+              <p>
+                Practice each question and receive personalized
+                AI feedback.
+              </p>
+            </div>
 
-                    <p>
-                      <strong>Overall Result:</strong>{" "}
-                      {evaluation.overall_result}
-                    </p>
-                  </div>
-                )}
+            {questions.length > 0 && (
+              <span className="questions-count">
+                {questions.length} Questions
+              </span>
+            )}
 
-                <br />
-              </li>
-            );
-          })}
-        </ol>
-      )}
-    </div>
+          </div>
+
+          {questions.length === 0 ? (
+
+            <div className="card empty-interview-state">
+
+              <div className="empty-icon">
+                ✦
+              </div>
+
+              <h3>No questions generated yet</h3>
+
+              <p>
+                Select a resume and job description above to
+                start your interview practice session.
+              </p>
+
+            </div>
+
+          ) : (
+
+            <div className="question-list">
+
+              {questions.map((item, index) => {
+
+                const evaluation = evaluations[item.id];
+                const isEvaluating = evaluating[item.id];
+                const evaluationError =
+                  evaluationErrors[item.id];
+
+                return (
+                  <article
+                    className="question-card card"
+                    key={item.id}
+                  >
+
+                    <div className="question-top">
+
+                      <div className="question-number-badge">
+                        {index + 1}
+                      </div>
+
+                      <div className="question-heading">
+
+                        <span>
+                          Question {index + 1}
+                        </span>
+
+                        <div className="question-meta">
+                          <span>
+                            {item.category}
+                          </span>
+
+                          <span>
+                            {item.difficulty}
+                          </span>
+
+                          <span>
+                            {item.question_type}
+                          </span>
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    <h3 className="question-text">
+                      {item.question}
+                    </h3>
+
+                    <div className="answer-area">
+
+                      <label>Your Answer</label>
+
+                      <textarea
+                        className="textarea answer-textarea"
+                        rows="6"
+                        value={answers[item.id] || ""}
+                        onChange={(e) =>
+                          handleAnswerChange(
+                            item.id,
+                            e.target.value
+                          )
+                        }
+                        placeholder="Write your answer here..."
+                      />
+
+                    </div>
+
+                    <div className="question-actions">
+
+                      <button
+                        className="btn btn-primary"
+                        type="button"
+                        onClick={() =>
+                          handleEvaluate(item.id)
+                        }
+                        disabled={isEvaluating}
+                      >
+                        {isEvaluating
+                          ? "Evaluating..."
+                          : "Evaluate Answer"}
+                      </button>
+
+                    </div>
+
+                    {evaluationError && (
+                      <div className="evaluation-error">
+                        <strong>Error:</strong>{" "}
+                        {evaluationError}
+                      </div>
+                    )}
+
+                    {evaluation && (
+                      <div className="evaluation-card">
+
+                        <div className="evaluation-header">
+                          <div>
+                            <span>AI FEEDBACK</span>
+                            <h3>Answer Evaluation</h3>
+                          </div>
+
+                          <div className="evaluation-score">
+                            <strong>
+                              {evaluation.score}
+                            </strong>
+                            <span>/10</span>
+                          </div>
+                        </div>
+
+                        <div className="evaluation-grid">
+
+                          <div className="evaluation-item">
+                            <strong>Feedback</strong>
+                            <p>
+                              {evaluation.feedback}
+                            </p>
+                          </div>
+
+                          <div className="evaluation-item">
+                            <strong>Strengths</strong>
+                            <p>
+                              {evaluation.strengths}
+                            </p>
+                          </div>
+
+                          <div className="evaluation-item">
+                            <strong>Improvements</strong>
+                            <p>
+                              {evaluation.improvements}
+                            </p>
+                          </div>
+
+                          <div className="evaluation-item">
+                            <strong>Overall Result</strong>
+                            <p>
+                              {evaluation.overall_result}
+                            </p>
+                          </div>
+
+                        </div>
+
+                      </div>
+                    )}
+
+                  </article>
+                );
+              })}
+
+            </div>
+          )}
+
+        </section>
+
+      </div>
+    </main>
   );
 }

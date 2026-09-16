@@ -49,7 +49,6 @@ export default function JobDescription() {
 
       setTitle("");
       setJdText("");
-
       setMessage("Job description saved successfully");
 
       await loadJobDescriptions();
@@ -82,7 +81,6 @@ export default function JobDescription() {
       await api.post("/job-description/upload", formData);
 
       setFile(null);
-
       setMessage("Job description uploaded successfully");
 
       await loadJobDescriptions();
@@ -99,84 +97,93 @@ export default function JobDescription() {
   };
 
   return (
-    <div>
-      <h1>Job Description</h1>
+    <main className="page-container">
+      <div className="page-heading">
+        <h1>Job Description</h1>
+        <p>Add a job description by pasting the text or uploading a file.</p>
+      </div>
 
-      <h2>Paste Job Description</h2>
+      <section className="card">
+        <h2>Paste Job Description</h2>
+        <p className="section-description">
+          Add the job details you want to use for interview preparation.
+        </p>
 
-      <form onSubmit={handleTextSubmit}>
-        <div>
-          <label>Title</label>
-          <br />
+        <form onSubmit={handleTextSubmit} className="form-stack">
+          <div className="form-group">
+            <label>Title</label>
+            <input
+              className="input"
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Python Backend Developer"
+            />
+          </div>
 
+          <div className="form-group">
+            <label>Job Description</label>
+            <textarea
+              className="textarea jd-textarea"
+              rows="12"
+              value={jdText}
+              onChange={(e) => setJdText(e.target.value)}
+              placeholder="Paste the complete job description here..."
+            />
+          </div>
+
+          <button className="btn btn-primary" type="submit">
+            Save Job Description
+          </button>
+        </form>
+      </section>
+
+      <section className="card upload-card">
+        <h2>Upload Job Description File</h2>
+        <p className="section-description">
+          Supported formats: PDF, DOC, DOCX, TXT
+        </p>
+
+        <form onSubmit={handleFileUpload} className="upload-form">
           <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Python Backend Developer"
+            className="input"
+            type="file"
+            accept=".pdf,.doc,.docx,.txt"
+            onChange={(e) => setFile(e.target.files[0])}
           />
+
+          <button className="btn btn-secondary" type="submit">
+            Upload JD
+          </button>
+        </form>
+
+        {message && <p className="form-message">{message}</p>}
+      </section>
+
+      <section className="content-section">
+        <div className="section-heading">
+          <h2>My Job Descriptions</h2>
+          <span className="count-badge">{jobDescriptions.length}</span>
         </div>
 
-        <br />
-
-        <div>
-          <label>Job Description</label>
-          <br />
-
-          <textarea
-            rows="12"
-            cols="60"
-            value={jdText}
-            onChange={(e) => setJdText(e.target.value)}
-            placeholder="Paste the complete job description here..."
-          />
-        </div>
-
-        <br />
-
-        <button type="submit">
-          Save Job Description
-        </button>
-      </form>
-
-      <hr />
-
-      <h2>Upload Job Description File</h2>
-
-      <form onSubmit={handleFileUpload}>
-        <input
-          type="file"
-          accept=".pdf,.doc,.docx,.txt"
-          onChange={(e) => setFile(e.target.files[0])}
-        />
-
-        <br />
-        <br />
-
-        <button type="submit">
-          Upload JD
-        </button>
-      </form>
-
-      <p>{message}</p>
-
-      <hr />
-
-      <h2>My Job Descriptions</h2>
-
-      {jobDescriptions.length === 0 ? (
-        <p>No job descriptions added yet.</p>
-      ) : (
-        <ul>
-          {jobDescriptions.map((jd) => (
-            <li key={jd.id}>
-              <strong>{jd.original_filename}</strong>
-              {" — "}
-              {jd.file_type}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+        {jobDescriptions.length === 0 ? (
+          <div className="card empty-state">
+            <h3>No job descriptions added yet</h3>
+            <p>Add a job description to start interview preparation.</p>
+          </div>
+        ) : (
+          <div className="resume-list">
+            {jobDescriptions.map((jd) => (
+              <div className="card resume-item" key={jd.id}>
+                <div>
+                  <h3>{jd.original_filename}</h3>
+                  <p>{jd.file_type}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
   );
 }
