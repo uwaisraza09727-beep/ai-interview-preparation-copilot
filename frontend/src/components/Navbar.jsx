@@ -1,3 +1,5 @@
+import api from "../services/api";
+import { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 function HomeIcon() {
@@ -140,6 +142,23 @@ export default function Navbar() {
   const publicRoutes = ["/", "/login", "/register"];
   const isPublicRoute = publicRoutes.includes(location.pathname);
 
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (isPublicRoute) return;
+
+    const loadUser = async () => {
+      try {
+        const response = await api.get("/users/me");
+        setUser(response.data);
+      } catch (error) {
+        console.error("Unable to load user profile:", error);
+      }
+    };
+
+    loadUser();
+  }, [isPublicRoute]);
+
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     navigate("/login", { replace: true });
@@ -218,11 +237,17 @@ export default function Navbar() {
 
       <div className="sidebar-bottom">
         <div className="sidebar-profile">
-          <div className="profile-avatar">A</div>
+          <div className="profile-avatar">
+            {user?.full_name?.charAt(0).toUpperCase() || "U"}
+          </div>
 
           <div className="profile-info">
-            <strong>Arhan</strong>
-            <span>Student</span>
+            <strong>{user?.full_name || "User"}</strong>
+            <span>
+              {user?.role === "USER"
+                ? "Student"
+                : user?.role || "User"}
+            </span>
           </div>
 
           <ChevronDownIcon />
@@ -239,4 +264,4 @@ export default function Navbar() {
       </div>
     </aside>
   );
-}
+}   
